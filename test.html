@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>틱톡 탈출 테스트</title>
+<style>
+  body { margin: 0; padding: 20px 16px 40px; background: #070d1c; color: #eef3ff;
+    font-family: -apple-system, "Malgun Gothic", "Noto Sans KR", Roboto, sans-serif; }
+  h1 { font-size: 19px; margin: 0 0 6px; }
+  p { color: #9aa8c7; font-size: 14px; line-height: 1.6; margin: 0 0 16px; }
+  a, button { display: block; width: 100%; padding: 16px; margin-bottom: 10px; border-radius: 12px;
+    background: #0f1830; color: #eef3ff; border: 1.5px solid #3ddc97; font-size: 16px; font-weight: 700;
+    text-align: center; text-decoration: none; font-family: inherit; }
+</style>
+</head>
+<body>
+<h1>틱톡 탈출 테스트 (운영자용)</h1>
+<p>A부터 F까지 하나씩 눌러보고, 텔레그램이나 Chrome·삼성 인터넷이 열리는 버튼의 알파벳을 알려주세요.</p>
+
+<a id="a" href="#">A</a>
+<a id="b" href="#">B</a>
+<a id="c" href="#">C</a>
+<a id="d" href="#">D</a>
+<button id="e" type="button">E</button>
+<a id="f" href="#">F</a>
+
+<script>
+(function () {
+  var INVITE = "pt7nrmwYHKhiMTVl";
+  var web = "https://t.me/+" + INVITE;
+  var here = "https://sunasset1016-stack.github.io/join/";
+  var enc = encodeURIComponent;
+
+  // A: Chrome 전용 주소
+  document.getElementById("a").href = "googlechrome://navigate?url=" + enc(here);
+  // B: Chrome 지정 intent
+  document.getElementById("b").href =
+    "intent://sunasset1016-stack.github.io/join/#Intent;scheme=https;package=com.android.chrome;end";
+  // C: 삼성 인터넷 전용 주소
+  document.getElementById("c").href = "samsunginternet://open?url=" + enc(here);
+  // D: 삼성 인터넷 지정 intent
+  document.getElementById("d").href =
+    "intent://sunasset1016-stack.github.io/join/#Intent;scheme=https;package=com.sec.android.app.sbrowser;end";
+  // E: 새 창 열기
+  document.getElementById("e").addEventListener("click", function () { window.open(web, "_blank"); });
+  // F: 텔레그램 앱 주소 직접
+  document.getElementById("f").href = "tg://join?invite=" + INVITE;
+})();
+</script>
+</body>
+</html>
