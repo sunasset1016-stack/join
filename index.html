@@ -118,10 +118,13 @@
 <script>
 (function () {
   // ▼▼▼ 여기 한 줄만 본인 초대 링크로 맞추면 됩니다 (t.me/+ 뒤의 글자) ▼▼▼
-  var INVITE = "pt7nrmwYHKhiMTVl";
+  var INVITE = "raM5wXwSELg0M2Q1";
   // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
 
-  var webUrl = "https://t.me/+" + INVITE;
+  // ▼▼▼ 프로필별 초대 링크(선택): 텔레그램에서 '틱톡용', '유튜브용' 초대 링크를 따로 만들었다면 t.me/+ 뒤의 글자를 넣으세요. ▼▼▼
+  //      비워 두면 위의 INVITE를 그대로 씁니다.
+  var INVITES = { tt: "raM5wXwSELg0M2Q1", yt: "dL4-s3mAzmwyZDJl" };
+  // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
 
   // ▼▼▼ 계수기: Apps Script 웹 앱 주소(…/exec)를 따옴표 안에 붙여 넣으세요. 비워 두면 기록하지 않습니다. ▼▼▼
   var COUNTER = "https://script.google.com/macros/s/AKfycbyYM7AhVxonvGpE_Tv8Jjz8yL20Q35DPL7ARuK9xtIyLyXxlblISrcLfRaNGEvpey3T2Q/exec";
@@ -130,6 +133,9 @@
   // 어느 프로필에서 왔는지: 주소 끝의 ?s=tt(틱톡) / ?s=yt(유튜브)
   var src = "";
   try { src = (new URLSearchParams(location.search).get("s") || "").replace(/[^a-z0-9_]/gi, "").slice(0, 12); } catch (e) {}
+
+  var code = INVITES[src] || INVITE;      // 온 곳에 맞는 초대 링크 고르기
+  var webUrl = "https://t.me/+" + code;
 
   // 개인을 알아볼 정보는 보내지 않습니다. (무슨 일이 있었는지, 어느 프로필, 어떤 환경인지만 기록)
   function count(ev, env) {
@@ -175,7 +181,7 @@
     if (isIOS) {
       // 아이폰은 Safari로 넘기는 버튼을 추가로 제공
       openBtn.textContent = "Safari로 열기";
-      openBtn.href = "x-safari-https://t.me/+" + INVITE;
+      openBtn.href = "x-safari-https://t.me/+" + code;
       show("open");
     }
   } else {
