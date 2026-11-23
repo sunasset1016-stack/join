@@ -123,6 +123,25 @@
 
   var webUrl = "https://t.me/+" + INVITE;
 
+  // ▼▼▼ 계수기: Apps Script 웹 앱 주소(…/exec)를 따옴표 안에 붙여 넣으세요. 비워 두면 기록하지 않습니다. ▼▼▼
+  var COUNTER = "https://script.google.com/macros/s/AKfycbyYM7AhVxonvGpE_Tv8Jjz8yL20Q35DPL7ARuK9xtIyLyXxlblISrcLfRaNGEvpey3T2Q/exec";
+  // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
+  // 어느 프로필에서 왔는지: 주소 끝의 ?s=tt(틱톡) / ?s=yt(유튜브)
+  var src = "";
+  try { src = (new URLSearchParams(location.search).get("s") || "").replace(/[^a-z0-9_]/gi, "").slice(0, 12); } catch (e) {}
+
+  // 개인을 알아볼 정보는 보내지 않습니다. (무슨 일이 있었는지, 어느 프로필, 어떤 환경인지만 기록)
+  function count(ev, env) {
+    if (!COUNTER) return;
+    var u = COUNTER + "?e=" + encodeURIComponent(ev) + "&s=" + encodeURIComponent(src || "none") +
+            "&v=" + encodeURIComponent(env) + "&t=" + Date.now();
+    try {
+      if (window.fetch) { fetch(u, { mode: "no-cors", keepalive: true }).catch(function () {}); }
+      else { new Image().src = u; }
+    } catch (e) { try { new Image().src = u; } catch (e2) {} }
+  }
+
   var ua = navigator.userAgent || "";
   var isAndroid = /Android/i.test(ua);
   var isIOS = /iPhone|iPad|iPod/i.test(ua);
@@ -135,11 +154,18 @@
 
   function show(id, mode) { document.getElementById(id).style.display = mode || "block"; }
 
+  var isTikTok = /musical_ly|BytedanceWebview|ByteLocale|TikTok|trill/i.test(ua);
+  var os = isAndroid ? "android" : (isIOS ? "ios" : "pc");
+  var env = (!isMobile ? "pc" : (isTikTok ? "tiktok_app" : (inApp ? "other_app" : "browser"))) + "_" + os;
+
   if (isMobile && !inApp) {
     // Chrome·Safari 등 일반 브라우저: 텔레그램 초대 화면으로 바로 이동
-    location.replace(webUrl);
+    count("go_telegram", env);
+    setTimeout(function () { location.replace(webUrl); }, COUNTER ? 350 : 0); // 기록이 나갈 시간을 잠깐 줌
     return;
   }
+
+  count("guide_shown", env); // 틱톡 등 앱 안(안내 화면) 또는 PC 화면이 보임
 
   if (isMobile && inApp) {
     // 틱톡 등 앱 안: 앱 호출이 막혀 있으므로 ⋯ → 브라우저에서 열기 안내를 크게 보여줌
@@ -164,7 +190,10 @@
     setTimeout(function () { toast.className = "toast"; }, 1800);
   }
 
+  openBtn.addEventListener("click", function () { count("open_button", env); });
+
   copyBtn.addEventListener("click", function () {
+    count("copy_link", env);
     function fallback() {
       var ta = document.createElement("textarea");
       ta.value = webUrl;
